@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotifyHub - Complete Message Flow & Diagrams</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .toc {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .toc h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            columns: 2;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .toc a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        section {
+            margin-bottom: 50px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 40px;
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 15px;
+            border-radius: 3px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .flow-diagram {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f1ff 100%);
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .flow-step h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .code-block code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            padding: 15px 15px 15px 50px;
+            position: relative;
+            border-left: 3px solid #667eea;
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+        }
+
+        .timeline-item.success::before {
+            background: #28a745;
+        }
+
+        .timeline-item.retry::before {
+            background: #ffc107;
+        }
+
+        .timeline-item.failure::before {
+            background: #dc3545;
+        }
+
+        .timeline-time {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.9em;
+        }
+
+        .timeline-content {
+            margin-top: 5px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+        }
+
+        table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .scenario-tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .scenario-tab:hover, .scenario-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .scenario-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .scenario-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 1.5em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px 40px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .component-box {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .component-box::before {
+            content: attr(data-label);
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: white;
+            padding: 0 5px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 30px 20px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .toc ul {
+                columns: 1;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-diagram {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 NotifyHub - Complete Message Flow</h1>
+            <p>Step-by-Step Guide with Flow Diagrams</p>
+        </header>
+
+        <div class="content">
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3>📋 Navigation</h3>
+                <ul>
+                    <li><a href="#overview">System Overview</a></li>
+                    <li><a href="#high-level-flow">High-Level Flow</a></li>
+                    <li><a href="#detailed-steps">Detailed Steps</a></li>
+                    <li><a href="#success-scenario">Success Scenario</a></li>
+                    <li><a href="#retry-scenario">Retry Scenario</a></li>
+                    <li><a href="#dlq-scenario">DLQ Scenario</a></li>
+                    <li><a href="#timing">Timing Analysis</a></li>
+                    <li><a href="#complete-flow">Complete Flow Diagram</a></li>
+                </ul>
+            </div>
+
+            <!-- System Overview Section -->
+            <section id="overview">
+                <h2>🏗️ System Overview</h2>
+                <p>
+                    NotifyHub is a distributed notification system that demonstrates independent failure handling 
+                    with automatic retries and dead-letter queues. When a user registers, the system publishes events 
+                    to three separate notification channels that process independently.
+                </p>
+
+                <h3>Core Components</h3>
+                <div class="grid-2">
+                    <div class="component-box" data-label="User Service (Port 8080)">
+                        <strong>Responsibilities:</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Receive user registration requests</li>
+                            <li>Create users in-memory or database</li>
+                            <li>Publish user.events to Kafka</li>
+                            <li>Return 201 Created to client</li>
+                        </ul>
+                    </div>
+                    <div class="component-box" data-label="Notification Service (Port 8090)">
+                        <strong>Responsibilities:</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Router: Routes events to 3 topics</li>
+                            <li>3 Consumers: Email, SMS, Push</li>
+                            <li>Retry Logic: 3 attempts per service</li>
+                            <li>DLQ Handler: Manages failures</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- High-Level Flow Section -->
+            <section id="high-level-flow">
+                <h2>🔄 High-Level Flow</h2>
+                <p>Here's the big picture of how a message travels through the system:</p>
+
+                <div class="flow-diagram">
+                    <pre>
+1. CLIENT REQUEST
+   ↓
+   POST /api/users
+   {id, name, email, phoneNumber}
+   ↓
+
+2. USER SERVICE PROCESSING
+   ├─ Validate input
+   ├─ Create user (in-memory)
+   ├─ Publish UserRegisteredEvent
+   │  └─ Topic: user.events
+   │  └─ Message: {userId, email, phoneNumber, name}
+   └─ Return 201 Created immediately
+   ↓
+   ⏱️ Time: < 100ms (doesn't wait for notifications)
+   ↓
+
+3. KAFKA BROKER
+   ├─ Receives message in user.events topic
+   ├─ Partition 0, Offset increases
+   └─ Message persisted (durable)
+   ↓
+   ⏱️ Time: < 10ms latency
+   ↓
+
+4. NOTIFICATION SERVICE - ROUTER
+   ├─ UserEventConsumer listens to user.events
+   ├─ Receives the event
+   ├─ Publishes to 3 SEPARATE topics:
+   │  ├─ email.events
+   │  ├─ sms.events
+   │  └─ push.events
+   └─ All 3 published within milliseconds
+   ↓
+   ⏱️ Time: < 50ms total
+   ↓
+
+5. THREE INDEPENDENT CONSUMERS
+   ├─ EmailNotificationConsumer (Partition 0, Offset)
+   ├─ SmsNotificationConsumer (Partition 0, Offset)
+   └─ PushNotificationConsumer (Partition 0, Offset)
+   ↓
+   All process IN PARALLEL
+   ↓
+
+6. SERVICES - ATTEMPT 1
+   ├─ EmailService.sendEmail() → SUCCESS or FAIL
+   ├─ SmsService.sendSms() → SUCCESS or FAIL
+   └─ PushService.sendPush() → SUCCESS or FAIL
+   ↓
+
+7. RESULT:
+   ├─ If SUCCESS ✓
+   │  └─ Message acknowledged
+   │  └─ Notification delivered
+   │
+   ├─ If FAIL (Attempt 1 only)
+   │  └─ Schedule RETRY in 1 second
+   │  └─ Message not acknowledged yet
+   │
+   └─ If FAIL 3+ times
+      └─ Send to Dead-Letter Queue
+      └─ DeadLetterQueueConsumer handles it
+      └─ Alert ops team
+                    </pre>
+                </div>
+            </section>
+
+            <!-- Detailed Steps Section -->
+            <section id="detailed-steps">
+                <h2>📍 Detailed Step-by-Step Breakdown</h2>
+
+                <!-- Step 1 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">1</span> Client Sends Registration Request</h4>
+                    <p><strong>Where:</strong> User Service (Port 8080)</p>
+                    <p><strong>What Happens:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Client sends POST request with user details</li>
+                        <li>UserController.register() method is invoked</li>
+                        <li>Request data: id, name, email, phoneNumber (from User Service)</li>
+                    </ul>
+                    <div class="code-block"><code>
+POST /api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "user001",
+  "name": "Alice",
+  "email": "alice@example.com"
+}
+                    </code></div>
+                    <p><strong>Timing:</strong> ⏱️ Request received in < 1ms</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">2</span> User Service Creates User & Publishes Event</h4>
+                    <p><strong>Where:</strong> User Service - UserController & UserEventProducer</p>
+                    <p><strong>Code Flow:</strong></p>
+                    <div class="code-block"><code>
+@PostMapping("/api/users")
+public ResponseEntity&lt;User&gt; register(@RequestBody User user) {
+    // Step 1: Validate and store user (in-memory)
+    
+    // Step 2: Publish event to Kafka
+    producer.sendUserRegistered(user);
+    
+    // Step 3: Immediately return response (don't wait!)
+    return ResponseEntity.status(201).body(user);
+}
+                    </code></div>
+                    <p><strong>Event Published:</strong></p>
+                    <div class="code-block"><code>
+Topic: user.events
+Key: user001
+Value: {
+  "userId": "user001",
+  "name": "Alice",
+  "email": "alice@example.com",
+  "phoneNumber": "+1-555-0000",
+  "eventType": "USER_REGISTERED"
+}
+                    </code></div>
+                    <p><strong>Key Point:</strong> ✅ Service returns immediately (asynchronous processing)</p>
+                    <p><strong>Timing:</strong> ⏱️ < 100ms total (publication + response)</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">3</span> Client Receives 201 Response</h4>
+                    <p><strong>Client receives:</strong></p>
+                    <div class="code-block"><code>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "id": "user001",
+  "name": "Alice",
+  "email": "alice@example.com"
+}
+                    </code></div>
+                    <p><strong>Important:</strong> ⚡ Client gets response BEFORE notifications are sent</p>
+                    <p><strong>User Experience:</strong> ✓ Registration completes instantly</p>
+                    <p><strong>Timing:</strong> ⏱️ < 500ms from request to response</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">4</span> Kafka Stores Message Durably</h4>
+                    <p><strong>What Happens in Kafka:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Message stored in partition 0</li>
+                        <li>Assigned an offset (monotonically increasing)</li>
+                        <li>Retained based on configuration (24 hours or 1GB)</li>
+                        <li>Available for all consumers to process</li>
+                    </ul>
+                    <div class="code-block"><code>
+Topic: user.events
+├─ Partition 0
+│  ├─ Offset 0: Previous message
+│  ├─ Offset 1: Previous message
+│  └─ Offset 42: ← NEW MESSAGE (our user event)
+│     {userId: "user001", email: "alice@example.com", ...}
+                    </code></div>
+                    <p><strong>Durability:</strong> 💾 Message persisted (survives broker restart)</p>
+                    <p><strong>Timing:</strong> ⏱️ < 50ms from producer to broker</p>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">5</span> Notification Service Router Receives Event</h4>
+                    <p><strong>Component:</strong> UserEventConsumer (the Router)</p>
+                    <p><strong>Trigger:</strong> @KafkaListener(topics = "user.events")</p>
+                    <p><strong>What Happens:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Consumer pool fetches new messages from partition 0</li>
+                        <li>UserEventConsumer.handleUserRegistered() is invoked</li>
+                        <li>Receives the event with metadata (topic, partition, offset)</li>
+                        <li>Validates and converts event to NotificationEvent</li>
+                    </ul>
+                    <div class="code-block"><code>
+@KafkaListener(topics = "user.events", groupId = "notification-service-group")
+public void handleUserRegistered(
+        @Payload Object userEvent,
+        @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+        @Header(KafkaHeaders.OFFSET) long offset) {
+    
+    // Received from: user.events, partition: 0, offset: 42
+    
+    logger.info("[USER-EVENT-ROUTER] Received user event");
+    
+    // Convert to NotificationEvent
+    NotificationEvent notificationEvent = convertToNotificationEvent(userEvent);
+}
+                    </code></div>
+                    <p><strong>Timing:</strong> ⏱️ < 100ms from publication to consumption</p>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">6</span> Router Publishes to 3 Separate Topics</h4>
+                    <p><strong>The Routing Logic:</strong></p>
+                    <p>Router publishes the SAME event to 3 different topics, each with its own consumer:</p>
+                    <div class="code-block"><code>
+routeEmailNotification(notificationEvent);  // → email.events
+routeSmsNotification(notificationEvent);    // → sms.events
+routePushNotification(notificationEvent);   // → push.events
+
+Implementation:
+kafkaTemplate.send(EMAIL_TOPIC, event.getUserId(), event);
+kafkaTemplate.send(SMS_TOPIC, event.getUserId(), event);
+kafkaTemplate.send(PUSH_TOPIC, event.getUserId(), event);
+                    </code></div>
+                    <p><strong>Topics Created:</strong></p>
+                    <table>
+                        <tr>
+                            <th>Topic</th>
+                            <th>Consumer</th>
+                            <th>Service</th>
+                            <th>Failure Rate</th>
+                        </tr>
+                        <tr>
+                            <td>email.events</td>
+                            <td>EmailNotificationConsumer</td>
+                            <td>EmailNotificationService</td>
+                            <td>10%</td>
+                        </tr>
+                        <tr>
+                            <td>sms.events</td>
+                            <td>SmsNotificationConsumer</td>
+                            <td>SmsNotificationService</td>
+                            <td>15%</td>
+                        </tr>
+                        <tr>
+                            <td>push.events</td>
+                            <td>PushNotificationConsumer</td>
+                            <td>PushNotificationService</td>
+                            <td>5%</td>
+                        </tr>
+                    </table>
+                    <p><strong>Independence:</strong> ✓ Each topic has independent consumer group</p>
+                    <p><strong>Timing:</strong> ⏱️ < 50ms to publish all 3 topics</p>
+                </div>
+
+                <!-- Step 7 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">7</span> Three Consumers Process in Parallel</h4>
+                    <p><strong>What's Happening Now:</strong></p>
+                    <p>Three independent consumers are consuming from their respective topics SIMULTANEOUSLY:</p>
+                    <div class="code-block"><code>
+EMAIL CONSUMER                SMS CONSUMER              PUSH CONSUMER
+│                             │                         │
+├─ Listening to               ├─ Listening to            ├─ Listening to
+│  email.events               │  sms.events              │  push.events
+│                             │                         │
+├─ Consumer Group:            ├─ Consumer Group:         ├─ Consumer Group:
+│  email-notification-        │  sms-notification-       │  push-notification-
+│  consumer-group             │  consumer-group          │  consumer-group
+│                             │                         │
+└─ When message arrives       └─ When message arrives    └─ When message arrives
+   in email.events              in sms.events              in push.events
+   ↓                            ↓                          ↓
+   Trigger consumer pool        Trigger consumer pool      Trigger consumer pool
+   Fetch offset X               Fetch offset Y             Fetch offset Z
+                    </code></div>
+                    <p><strong>Parallel Processing:</strong> ⚡ All 3 run simultaneously</p>
+                    <p><strong>No Blocking:</strong> ✓ Each consumer independent</p>
+                    <p><strong>Timing:</strong> ⏱️ Arrival < 50ms</p>
+                </div>
+
+                <!-- Step 8 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">8</span> Services Execute (Attempt 1)</h4>
+                    <p><strong>All Three Attempt in Parallel:</strong></p>
+                    <div class="code-block"><code>
+ATTEMPT 1:
+
+EmailNotificationConsumer:
+  └─ emailService.sendEmail(event)
+     ├─ Extract email address
+     ├─ Attempt sending via SendGrid/SES
+     └─ SUCCESS ✓ or FAIL ✗
+
+SmsNotificationConsumer:
+  └─ smsService.sendSms(event)
+     ├─ Extract phone number
+     ├─ Attempt sending via Twilio/SNS
+     └─ SUCCESS ✓ or FAIL ✗
+
+PushNotificationConsumer:
+  └─ pushService.sendPush(event)
+     ├─ Extract user ID
+     ├─ Attempt sending via Firebase/OneSignal
+     └─ SUCCESS ✓ or FAIL ✗
+                    </code></div>
+                    <p><strong>Probability (on each service):</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Email: 90% success, 10% fail</li>
+                        <li>SMS: 85% success, 15% fail</li>
+                        <li>Push: 95% success, 5% fail</li>
+                    </ul>
+                    <p><strong>Overall Success Rate:</strong> 90% × 85% × 95% ≈ 72.6% all succeed on first try</p>
+                    <p><strong>Timing:</strong> ⏱️ 50-500ms per service</p>
+                </div>
+
+                <!-- Step 9 -->
+                <div class="flow-step">
+                    <h4><span class="step-number">9</span> Message Acknowledgment (Success Case)</h4>
+                    <p><strong>When Service Succeeds:</strong></p>
+                    <div class="code-block"><code>
+// In EmailNotificationConsumer:
+try {
+    emailService.sendEmail(event);
+    
+    // SUCCESS - message automatically acknowledged
+    // Consumer group offset advances
+    // Message no longer needs to be processed
+    
+    logger.info("✓ Email sent successfully");
+    
+} catch (EmailNotificationException e) {
+    // FAIL - message NOT acknowledged yet
+    // Framework will retry
+}
+                    </code></div>
+                    <p><strong>Kafka Behavior:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>After method completes without exception</li>
+                        <li>Kafka automatically acknowledges the message</li>
+                        <li>Consumer group offset moves forward</li>
+                        <li>Message won't be reprocessed</li>
+                    </ul>
+                    <p><strong>Timing:</strong> ⏱️ Acknowledged automatically after success</p>
+                </div>
+            </section>
+
+            <!-- Success Scenario -->
+            <section id="success-scenario">
+                <h2>✅ Scenario 1: All Services Succeed</h2>
+                <p>This is the happy path where all three notification services succeed on the first attempt.</p>
+
+                <h3>Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.0s</div>
+                        <div class="timeline-content">
+                            <strong>User Registration</strong><br>
+                            POST /api/users received
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.05s</div>
+                        <div class="timeline-content">
+                            <strong>Event Published</strong><br>
+                            User Service publishes to user.events
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.06s</div>
+                        <div class="timeline-content">
+                            <strong>Client Receives Response</strong><br>
+                            HTTP 201 Created returned to client<br>
+                            ⚡ Client thinks registration is done!
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.10s</div>
+                        <div class="timeline-content">
+                            <strong>Router Receives Event</strong><br>
+                            UserEventConsumer fetches from user.events<br>
+                            Begins routing to 3 topics
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.15s</div>
+                        <div class="timeline-content">
+                            <strong>Events in 3 Topics</strong><br>
+                            ├─ email.events (offset 10)<br>
+                            ├─ sms.events (offset 15)<br>
+                            └─ push.events (offset 8)
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.20s</div>
+                        <div class="timeline-content">
+                            <strong>All Consumers Triggered</strong><br>
+                            ├─ EmailNotificationConsumer starts<br>
+                            ├─ SmsNotificationConsumer starts<br>
+                            └─ PushNotificationConsumer starts
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.25s - 0.35s</div>
+                        <div class="timeline-content">
+                            <strong>Services Execute (Attempt 1)</strong><br>
+                            ├─ EmailService.sendEmail() → SUCCESS ✓<br>
+                            ├─ SmsService.sendSms() → SUCCESS ✓<br>
+                            └─ PushService.sendPush() → SUCCESS ✓
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.35s</div>
+                        <div class="timeline-content">
+                            <strong>Messages Acknowledged</strong><br>
+                            ├─ email.events message acked (offset +1)<br>
+                            ├─ sms.events message acked (offset +1)<br>
+                            └─ push.events message acked (offset +1)
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.35s</div>
+                        <div class="timeline-content">
+                            <strong>✅ COMPLETE</strong><br>
+                            All notifications delivered successfully!<br>
+                            User has received email, SMS, and push
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Console Output</h3>
+                <div class="code-block"><code>
+[USER-EVENT-ROUTER] Received user event from topic: user.events, partition: 0, offset: 42
+[ROUTER] ✓ Routed event to email.events for user: user001
+[ROUTER] ✓ Routed event to sms.events for user: user001
+[ROUTER] ✓ Routed event to push.events for user: user001
+[USER-EVENT-ROUTER] ✓ Successfully routed event for user: user001
+
+[EMAIL CONSUMER] Received message from topic: email.events, partition: 0, offset: 10
+[EMAIL SERVICE] ✓ Email sent successfully to: alice@example.com
+[EMAIL CONSUMER] ✓ Successfully processed email notification for user: user001
+
+[SMS CONSUMER] Received message from topic: sms.events, partition: 0, offset: 15
+[SMS SERVICE] ✓ SMS sent successfully to: +1-555-0000
+[SMS CONSUMER] ✓ Successfully processed SMS notification for user: user001
+
+[PUSH CONSUMER] Received message from topic: push.events, partition: 0, offset: 8
+[PUSH SERVICE] ✓ Push notification sent successfully to user: user001
+[PUSH CONSUMER] ✓ Successfully processed push notification for user: user001
+                </code></div>
+
+                <div class="success-box">
+                    <strong>✅ Total Time: ~350ms</strong><br>
+                    Client received response in ~60ms<br>
+                    All notifications delivered within 350ms
+                </div>
+            </section>
+
+            <!-- Retry Scenario -->
+            <section id="retry-scenario">
+                <h2>🔄 Scenario 2: Email Fails Then Succeeds (Retry)</h2>
+                <p>
+                    Email service fails on the first attempt (simulating network timeout or service temporarily down), 
+                    but succeeds after 1 second retry.
+                </p>
+
+                <h3>Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.0s - 0.35s</div>
+                        <div class="timeline-content">
+                            <strong>Same as Success Scenario</strong><br>
+                            Registration → Publishing → Routing → All 3 consumers triggered
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.25s</div>
+                        <div class="timeline-content">
+                            <strong>Email Attempt 1</strong><br>
+                            EmailService.sendEmail() called
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 0.30s</div>
+                        <div class="timeline-content">
+                            <strong>❌ Email Fails (Attempt 1)</strong><br>
+                            EmailNotificationException thrown<br>
+                            Exception: "Email server temporarily unavailable"
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.30s</div>
+                        <div class="timeline-content">
+                            <strong>Message NOT Acknowledged</strong><br>
+                            Exception prevents acknowledgment<br>
+                            Framework detects failure
+                        </div>
+                    </div>
+
+                    <div class="timeline-item retry">
+                        <div class="timeline-time">Time 0.30s</div>
+                        <div class="timeline-content">
+                            <strong>Retry Scheduled</strong><br>
+                            Framework publishes to: email.events-retry<br>
+                            Scheduled for: 1 second delay (exponential backoff)
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.25s - 0.35s</div>
+                        <div class="timeline-content">
+                            <strong>SMS & Push Still Work!</strong><br>
+                            SMS: SUCCESS ✓<br>
+                            Push: SUCCESS ✓<br>
+                            (Independent of email failure)
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 1.0s</div>
+                        <div class="timeline-content">
+                            <strong>Email Attempt 2 (Retry)</strong><br>
+                            Message from email.events-retry consumed<br>
+                            EmailService.sendEmail() called again
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 1.05s</div>
+                        <div class="timeline-content">
+                            <strong>✓ Email Succeeds (Attempt 2)</strong><br>
+                            EmailService.sendEmail() completes successfully<br>
+                            No exception thrown
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 1.05s</div>
+                        <div class="timeline-content">
+                            <strong>Message Acknowledged</strong><br>
+                            email.events-retry message acked<br>
+                            Consumer group offset advances
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 1.05s</div>
+                        <div class="timeline-content">
+                            <strong>✅ COMPLETE</strong><br>
+                            All three notifications delivered!<br>
+                            Email delivered (after retry)
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Console Output</h3>
+                <div class="code-block"><code>
+[USER-EVENT-ROUTER] Received user event from topic: user.events...
+[ROUTER] ✓ Routed event to email.events, sms.events, push.events
+
+[EMAIL CONSUMER] Received message from topic: email.events, partition: 0, offset: 10
+[EMAIL SERVICE] Processing email for user: user001 (alice@example.com)
+[EMAIL SERVICE] ✗ Email failed: Email server temporarily unavailable
+[EMAIL CONSUMER] ✗ Failed to send email for user: user001. Will retry.
+
+[SMS CONSUMER] Received message from topic: sms.events, partition: 0, offset: 15
+[SMS SERVICE] ✓ SMS sent successfully to: +1-555-0000
+[SMS CONSUMER] ✓ Successfully processed SMS notification for user: user001
+
+[PUSH CONSUMER] Received message from topic: push.events, partition: 0, offset: 8
+[PUSH SERVICE] ✓ Push notification sent successfully to user: user001
+[PUSH CONSUMER] ✓ Successfully processed push notification for user: user001
+
+--- 1 SECOND PASSES ---
+⏱️ Time 1.0s
+
+[EMAIL CONSUMER] Received message from topic: email.events-retry, partition: 0, offset: 1
+[EMAIL SERVICE] Processing email for user: user001 (alice@example.com)
+[EMAIL SERVICE] ✓ Email sent successfully to: alice@example.com
+[EMAIL CONSUMER] ✓ Successfully processed email notification for user: user001
+                </code></div>
+
+                <h3>Key Points</h3>
+                <div class="info-box">
+                    <strong>🔑 SMS & Push Success:</strong> Email failure did NOT block SMS or Push<br>
+                    <strong>🔑 Automatic Retry:</strong> Framework automatically retried after 1 second<br>
+                    <strong>🔑 No Manual Intervention:</strong> Developer didn't need to do anything<br>
+                    <strong>🔑 Message Preserved:</strong> Message stored in retry topic until success
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Total Time: ~1050ms</strong><br>
+                    Client received response in ~60ms<br>
+                    SMS & Push delivered in ~350ms<br>
+                    Email delivered in ~1050ms (after retry)
+                </div>
+            </section>
+
+            <!-- DLQ Scenario -->
+            <section id="dlq-scenario">
+                <h2>💀 Scenario 3: All Retries Fail (Dead-Letter Queue)</h2>
+                <p>
+                    Email service is completely down. All 3 retry attempts fail. 
+                    Message sent to Dead-Letter Queue for manual investigation.
+                </p>
+
+                <h3>Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time 0.0s - 0.35s</div>
+                        <div class="timeline-content">
+                            <strong>Registration & Routing</strong><br>
+                            Same as previous scenarios
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 0.30s</div>
+                        <div class="timeline-content">
+                            <strong>❌ Email Attempt 1 FAILS</strong><br>
+                            EmailService.sendEmail() throws exception<br>
+                            Cause: Email service is down (connection timeout)
+                        </div>
+                    </div>
+
+                    <div class="timeline-item retry">
+                        <div class="timeline-time">Time 0.30s</div>
+                        <div class="timeline-content">
+                            <strong>Schedule Retry 1</strong><br>
+                            Message queued for retry in 1 second
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 1.30s</div>
+                        <div class="timeline-content">
+                            <strong>❌ Email Attempt 2 FAILS</strong><br>
+                            EmailService.sendEmail() throws exception<br>
+                            Cause: Email service STILL down
+                        </div>
+                    </div>
+
+                    <div class="timeline-item retry">
+                        <div class="timeline-time">Time 1.30s</div>
+                        <div class="timeline-content">
+                            <strong>Schedule Retry 2</strong><br>
+                            Message queued for retry in 2 seconds (exponential backoff)
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 3.30s</div>
+                        <div class="timeline-content">
+                            <strong>❌ Email Attempt 3 FAILS</strong><br>
+                            EmailService.sendEmail() throws exception<br>
+                            Cause: Email service STILL down<br>
+                            This is the FINAL attempt
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 3.30s</div>
+                        <div class="timeline-content">
+                            <strong>All Retries Exhausted!</strong><br>
+                            ├─ Attempt 1: FAILED ✗ @ 0.30s<br>
+                            ├─ Attempt 2: FAILED ✗ @ 1.30s<br>
+                            └─ Attempt 3: FAILED ✗ @ 3.30s
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 3.30s</div>
+                        <div class="timeline-content">
+                            <strong>📤 Send to Dead-Letter Queue</strong><br>
+                            Topic: email.events-dlt<br>
+                            Message stored with error metadata
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 3.31s</div>
+                        <div class="timeline-content">
+                            <strong>🔔 DeadLetterQueueConsumer Triggered</strong><br>
+                            Consumes from email.events-dlt<br>
+                            Handles the failed message
+                        </div>
+                    </div>
+
+                    <div class="timeline-item failure">
+                        <div class="timeline-time">Time 3.32s</div>
+                        <div class="timeline-content">
+                            <strong>🚨 Alert Operations Team</strong><br>
+                            ├─ Send Slack message to #alerts channel<br>
+                            ├─ Create PagerDuty incident<br>
+                            ├─ Log error with full context<br>
+                            └─ Store in database for manual review
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time ~5m later</div>
+                        <div class="timeline-content">
+                            <strong>💼 On-Call Engineer Investigation</strong><br>
+                            ├─ Receives alert<br>
+                            ├─ Checks email service logs<br>
+                            ├─ Finds root cause (database down)<br>
+                            └─ Restarts email service
+                        </div>
+                    </div>
+
+                    <div class="timeline-item success">
+                        <div class="timeline-time">Time ~10m later</div>
+                        <div class="timeline-content">
+                            <strong>🔧 Manual Retry</strong><br>
+                            Engineer manually retries message from DLQ<br>
+                            Email service now UP<br>
+                            Email delivered successfully ✓
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Console Output</h3>
+                <div class="code-block"><code>
+[EMAIL CONSUMER] Attempt 1: Processing email for user: user001
+[EMAIL SERVICE] ✗ Email failed: Connection timeout
+[EMAIL CONSUMER] ✗ Failed to send email. Will retry after 1s.
+
+--- 1 SECOND PASSES ---
+[EMAIL CONSUMER] Attempt 2: Processing email for user: user001
+[EMAIL SERVICE] ✗ Email failed: Connection timeout
+[EMAIL CONSUMER] ✗ Failed to send email. Will retry after 2s.
+
+--- 2 SECONDS PASS ---
+[EMAIL CONSUMER] Attempt 3: Processing email for user: user001
+[EMAIL SERVICE] ✗ Email failed: Connection timeout
+[EMAIL CONSUMER] ✗ Failed to send email after 3 attempts.
+[EMAIL CONSUMER] Sending to Dead-Letter Queue: email.events-dlt
+
+[DLQ-EMAIL] Message failed after all retries!
+[DLQ-EMAIL] Topic: email.events-dlt, User: user001, Email: alice@example.com
+[ALERT] 🚨 ALERT: Email notification delivery failed for user user001 after 3 retries
+[DLQ-LOG] Failure Details - Type: EMAIL, UserId: user001, Email: alice@example.com
+
+--- MANUAL INTERVENTION ---
+[MANUAL-RETRY] Engineer retries message from DLQ database
+[EMAIL SERVICE] ✓ Email sent successfully to: alice@example.com
+                </code></div>
+
+                <h3>Message in DLQ Topic</h3>
+                <div class="code-block"><code>
+Topic: email.events-dlt
+├─ Partition 0
+│  └─ Offset 1: Failed message
+│     {
+│       userId: "user001",
+│       email: "alice@example.com",
+│       phoneNumber: "+1-555-0000",
+│       name: "Alice",
+│       eventType: "USER_REGISTERED",
+│       
+│       // Kafka headers added automatically:
+│       kafka_exception_message: "Connection timeout: email service unavailable",
+│       kafka_exception_timestamp: "2024-07-01T10:15:03Z",
+│       kafka_original_topic: "email.events",
+│       kafka_original_partition: 0,
+│       kafka_original_offset: 10
+│     }
+                </code></div>
+
+                <h3>Key Points</h3>
+                <div class="error-box">
+                    <strong>🔴 SMS & Push:</strong> Delivered successfully (independent)<br>
+                    <strong>🔴 Email:</strong> Failed after 3 attempts<br>
+                    <strong>🔴 Total Wait Time:</strong> ~3.3 seconds before DLQ<br>
+                    <strong>🔴 No Data Loss:</strong> Message preserved in DLQ forever
+                </div>
+
+                <div class="info-box">
+                    <strong>💾 Message Preserved:</strong> Stored in DLQ topic indefinitely<br>
+                    <strong>📊 Traceable:</strong> Original topic, offset, and errors recorded<br>
+                    <strong>🔧 Retryable:</strong> Can be manually retried via database<br>
+                    <strong>🚨 Actionable:</strong> Ops team alerted immediately
+                </div>
+            </section>
+
+            <!-- Timing Analysis -->
+            <section id="timing">
+                <h2>⏱️ Timing Analysis</h2>
+
+                <h3>Component Latencies</h3>
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Operation</th>
+                        <th>Typical Latency</th>
+                    </tr>
+                    <tr>
+                        <td>User Service</td>
+                        <td>Process request + publish event</td>
+                        <td>50-100ms</td>
+                    </tr>
+                    <tr>
+                        <td>Kafka Broker</td>
+                        <td>Store message</td>
+                        <td>10-50ms</td>
+                    </tr>
+                    <tr>
+                        <td>Consumer Pool</td>
+                        <td>Fetch and process message</td>
+                        <td>50-100ms</td>
+                    </tr>
+                    <tr>
+                        <td>Router</td>
+                        <td>Convert + publish to 3 topics</td>
+                        <td>30-50ms</td>
+                    </tr>
+                    <tr>
+                        <td>Email Service</td>
+                        <td>Send email (success)</td>
+                        <td>200-500ms</td>
+                    </tr>
+                    <tr>
+                        <td>SMS Service</td>
+                        <td>Send SMS (success)</td>
+                        <td>100-300ms</td>
+                    </tr>
+                    <tr>
+                        <td>Push Service</td>
+                        <td>Send push (success)</td>
+                        <td>50-150ms</td>
+                    </tr>
+                </table>
+
+                <h3>End-to-End Timing</h3>
+                <div class="card">
+                    <h4>Scenario 1: All Success (Happy Path)</h4>
+                    <div class="code-block"><code>
+Client sends request
+  ↓ 50-100ms
+User Service creates + publishes
+  ↓ 10-50ms
+Kafka stores message
+  ↓ 50-100ms
+Router consumes and routes
+  ↓ 30-50ms
+3 consumers triggered (in parallel)
+  ↓ 200-500ms (longest service = bottleneck)
+All 3 notifications delivered
+
+TOTAL: ~400-800ms for all notifications
+(Client gets response in ~60-100ms)
+                    </code></div>
+                </div>
+
+                <div class="card">
+                    <h4>Scenario 2: One Retry (Email Fails Once)</h4>
+                    <div class="code-block"><code>
+Attempt 1 fails @ 300ms
+Schedule retry @ 300ms
+  ↓ 1000ms (1 second delay)
+Attempt 2 @ 1300ms
+Attempt 2 succeeds @ 1500ms
+
+SMS & Push still deliver @ 300-500ms
+
+TOTAL: ~1500ms for email, ~500ms for others
+(SMS & Push don't wait for email)
+                    </code></div>
+                </div>
+
+                <div class="card">
+                    <h4>Scenario 3: All Retries Fail (DLQ)</h4>
+                    <div class="code-block"><code>
+Attempt 1 fails @ 300ms
+Attempt 2 fails @ 1300ms (after 1s)
+Attempt 3 fails @ 3300ms (after 2s)
+Send to DLQ @ 3300ms
+
+DLQ consumer processes @ 3310ms
+
+TOTAL: ~3.3 seconds until DLQ
+(Then manual retry as needed)
+                    </code></div>
+                </div>
+
+                <h3>Critical Path Analysis</h3>
+                <div class="flow-diagram">
+                    <pre>
+Critical Path (Determines Overall Latency):
+
+1. User Service: 50-100ms
+2. Kafka Publish: 10-50ms
+3. Router Consume & Route: 50-100ms
+4. Slowest Service (Email usually): 200-500ms
+                 ↓
+         CRITICAL: 310-750ms
+
+Non-Critical Paths (Parallel):
+├─ SMS Service: 100-300ms (can be slower than email)
+└─ Push Service: 50-150ms (fastest)
+
+Bottleneck: Whichever service is slowest!
+Current: Email service (200-500ms)
+
+Optimization: Parallelize within services
+(Use thread pools, async I/O, etc.)
+                    </pre>
+                </div>
+            </section>
+
+            <!-- Complete Flow Diagram -->
+            <section id="complete-flow">
+                <h2>📊 Complete System Flow Diagram</h2>
+
+                <div class="flow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            COMPLETE MESSAGE FLOW                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────┐
+│  CLIENT APPLICATION │
+└──────────┬──────────┘
+           │
+           │ POST /api/users
+           │ {id, name, email, phoneNumber}
+           │
+           ▼
+    ┌────────────────────────────────┐
+    │  USER SERVICE (Port 8080)      │
+    │  ├─ UserController             │
+    │  │  └─ register(@RequestBody)  │
+    │  │                              │
+    │  ├─ Create User (in-memory)    │
+    │  │                              │
+    │  └─ UserEventProducer           │
+    │     └─ sendUserRegistered()    │
+    │        └─ KafkaTemplate.send() │
+    └─────────────┬────────────────────┘
+                  │
+                  │ Publish UserRegisteredEvent
+                  │ Key: user001
+                  │ Topic: user.events
+                  │
+                  ▼
+    ┌─────────────────────────────────┐
+    │  KAFKA BROKER                   │
+    │  localhost:9092                 │
+    │                                 │
+    │  Topic: user.events             │
+    │  ├─ Partition 0                 │
+    │  │  └─ Offset 42: {userId, ...} │
+    │  ├─ Replication: 1              │
+    │  └─ Retention: 24h / 1GB        │
+    └─────────┬─────────────────────────┘
+              │
+              │ Consumer Pool fetches
+              │ (notification-service-group)
+              │
+              ▼
+    ┌────────────────────────────────────────┐
+    │  NOTIFICATION SERVICE                  │
+    │  (Port 8090)                           │
+    │                                        │
+    │  ┌──────────────────────────────────┐  │
+    │  │ UserEventConsumer (Router)       │  │
+    │  │ @KafkaListener(topics="user.   │  │
+    │  │               events")           │  │
+    │  │                                  │  │
+    │  │ handleUserRegistered() {         │  │
+    │  │   convertToNotificationEvent()   │  │
+    │  │   routeEmailNotification()  ─────────┼───┐
+    │  │   routeSmsNotification()    ─────────┼─┐ │
+    │  │   routePushNotification()   ─────────┼─┼─┐
+    │  │ }                                 │  │ │ │
+    │  └──────────────────────────────────┘  │ │ │
+    └────────┬───────────────────────────────┘ │ │ │
+             │                                  │ │ │
+   ┌─────────┴──────────────┐                 │ │ │
+   │                        │                 │ │ │
+   ▼                        ▼                 │ │ │
+┌──────────────┐      ┌──────────────┐       │ │ │
+│ email.events │      │ sms.events   │       │ │ │
+│              │      │              │       │ │ │
+│ Offset: 10   │      │ Offset: 15   │       │ │ │
+└──────┬───────┘      └──────┬───────┘       │ │ │
+       │                     │               │ │ │
+       │             <───────┼───────────────┘ │ │
+       │                     │                 │ │
+       │                     ▼                 │ │
+       │             ┌──────────────┐          │ │
+       │             │ push.events  │          │ │
+       │             │              │          │ │
+       │             │ Offset: 8    │          │ │
+       │             └──────┬───────┘          │ │
+       │                    │ <────────────────┘ │
+       │                    │                    │
+   ┌───┴──────┐         ┌───┴────────┐      ┌───┴──────┐
+   │ Consumer │         │ Consumer   │      │ Consumer │
+   │ Group:   │         │ Group:     │      │ Group:   │
+   │ email-   │         │ sms-       │      │ push-    │
+   │ notif..  │         │ notif..    │      │ notif..  │
+   └─────┬────┘         └─────┬──────┘      └────┬─────┘
+         │                    │                  │
+         ▼                    ▼                  ▼
+   ┌──────────────┐      ┌──────────────┐  ┌────────────┐
+   │ EmailConsumer│      │ SmsConsumer  │  │PushConsumer│
+   │              │      │              │  │            │
+   │@RetryableTopic      │@RetryableTopic  │@Retryable  │
+   │attempts: 3  │      │attempts: 3  │  │attempts: 3 │
+   └──────┬───────┘      └──────┬───────┘  └────┬───────┘
+          │                     │               │
+          ▼                     ▼               ▼
+   ┌──────────────┐      ┌──────────────┐  ┌────────────┐
+   │ EmailService │      │ SmsService   │  │PushService │
+   │              │      │              │  │            │
+   │sendEmail()   │      │sendSms()     │  │sendPush()  │
+   │              │      │              │  │            │
+   │Failure: 10%  │      │Failure: 15%  │  │Failure: 5% │
+   └──────┬───────┘      └──────┬───────┘  └────┬───────┘
+          │                     │               │
+    ┌─────┴─────────────────────┴───────────────┘
+    │
+    │ SUCCESS PATHS: Message ACKed
+    │ FAILURE PATHS (3 retries):
+    │ └─ Attempt 1 fails
+    │    └─ Retry Topic (delay: 1s)
+    │ └─ Attempt 2 fails
+    │    └─ Retry Topic (delay: 2s)
+    │ └─ Attempt 3 fails
+    │    └─ Send to DLQ
+    │
+    ▼
+┌───────────────────────────────────────────────────┐
+│ DEAD-LETTER QUEUES (DLQ)                          │
+│                                                   │
+│ ├─ email.events-dlt   (for email failures)       │
+│ ├─ sms.events-dlt     (for SMS failures)         │
+│ └─ push.events-dlt    (for push failures)        │
+│                                                   │
+│ DeadLetterQueueConsumer:                          │
+│ ├─ Listens to all 3 DLQ topics                   │
+│ ├─ Receives failed message with metadata         │
+│ ├─ Alerts operations team 🚨                     │
+│ ├─ Logs failure details 📝                       │
+│ └─ Stores in database for manual review 💾       │
+└───────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│ MANUAL INTERVENTION (When Ready) │
+│                                 │
+│ 1. Engineer investigates       │
+│ 2. Finds root cause            │
+│ 3. Fixes underlying issue      │
+│ 4. Manually retries from DB    │
+│ 5. Notification delivered ✓    │
+└─────────────────────────────────┘
+
+OUTCOMES:
+═════════════════════════════════════════════════════════════════
+✅ HAPPY PATH (All Success):          ~350-800ms all delivered
+🔄 RETRY PATH (One Fails Then Works):  ~1-3s for that channel
+💀 DLQ PATH (All Fail):                ~3.3s to DLQ, manual retry after
+
+KEY BENEFIT: Each channel independent!
+             Email down ≠ SMS down ≠ Push down
+                    </pre>
+                </div>
+
+                <h3>Data Structure Flow</h3>
+                <div class="code-block"><code>
+STEP 1: User registers
+Input: {id: "user001", name: "Alice", email: "alice@example.com"}
+
+STEP 2: User Service publishes
+Topic: user.events
+Message: {id: "user001", name: "Alice", email: "alice@example.com"}
+
+STEP 3: Router converts
+Target: NotificationEvent {
+  userId: "user001",
+  name: "Alice",
+  email: "alice@example.com",
+  phoneNumber: "+1-555-0000",
+  eventType: "USER_REGISTERED"
+}
+
+STEP 4: Router publishes to 3 topics
+Topic: email.events
+  Message: NotificationEvent { ... }
+  
+Topic: sms.events
+  Message: NotificationEvent { ... }
+  
+Topic: push.events
+  Message: NotificationEvent { ... }
+
+STEP 5: Consumers process independently
+Each receives same NotificationEvent
+Each extracts relevant field:
+- Email consumer: event.getEmail()
+- SMS consumer: event.getPhoneNumber()
+- Push consumer: event.getUserId()
+
+STEP 6: Success or Failure
+Success: Message acknowledged, offset advances
+Failure: Scheduled for retry, offset stays same
+
+STEP 7: All Retries Fail
+Message sent to DLQ with metadata:
+{
+  originalMessage: NotificationEvent { ... },
+  errorMessage: "Connection timeout",
+  attempt: 3,
+  originalTopic: "email.events",
+  originalPartition: 0,
+  originalOffset: 10
+}
+                </code></div>
+            </section>
+        </div>
+
+        <footer>
+            <p>
+                <strong>NotifyHub - Complete Message Flow Documentation</strong><br>
+                Understanding the journey of a message through the distributed notification system<br>
+                Built with ❤️ for Learning
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

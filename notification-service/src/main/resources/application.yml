@@ -1,0 +1,34 @@
+server:
+  port: 8090
+
+spring:
+  kafka:
+    # Bootstrap servers - where Kafka broker is running
+    bootstrap-servers: localhost:9092
+    
+    # Consumer configuration
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: notification-service-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      auto-commit-interval-ms: 5000
+    
+    # Producer configuration (for routing events to notification topics)
+    producer:
+      bootstrap-servers: localhost:9092
+      acks: all
+      retries: 3
+    
+    # Kafka properties - Enable auto topic creation for this demo
+    properties:
+      auto.create.topics.enable: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.example.notificationservice: DEBUG
+    org.springframework.kafka: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
